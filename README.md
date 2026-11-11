@@ -30,6 +30,21 @@ const patched_std = b.dependency("patch", .{
 
 > Note that replacing std in the root module automatically replaces it for every module in the compilation.
 
+### Stale builds after changing a std patch
+
+In zig 0.16 and 0.17 the compiler leaves the std module out of its cache key, even when it's been replaced. After a std patch changes, the patch is applied again but the compile step that uses it is "cached" and you get the previous build. This is fixed in zig 0.18.
+
+Until then, either delete `.zig-cache` after changing a std patch (or updating a dependency that provides one), or give the root module a second import of the patched std. Nothing needs to import it, it just puts the patched path in the cache key:
+
+```zig
+.imports = &.{
+    .{ .name = "std", .module = patched_std },
+    .{ .name = "std_cache_key", .module = b.createModule(.{
+        .root_source_file = patched_std.root_source_file,
+    }) },
+},
+```
+
 ## Making a patch
 
 Patches use git's format:

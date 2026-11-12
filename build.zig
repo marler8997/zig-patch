@@ -5,7 +5,11 @@ pub fn build(b: *std.Build) void {
         .target = b.graph.host,
         .optimize = b.standardOptimizeOption(.{}),
     });
-    const exe = b.addExecutable(.{ .name = "patch", .root_module = module });
+    const exe = b.addExecutable(.{
+        .name = "patch",
+        .root_module = module,
+        .win32_manifest = b.path("src/asinvoker.manifest"),
+    });
     b.installArtifact(exe);
 
     {

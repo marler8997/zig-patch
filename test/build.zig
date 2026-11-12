@@ -16,6 +16,7 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
         }),
+        .win32_manifest = b.dependency("patch", .{}).path("src/asinvoker.manifest"),
     })).step);
 
     // every module sees the patched std and patches stack
